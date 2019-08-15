@@ -6,7 +6,7 @@ nsf:
     desc: this is service description
 
   # agent配置
-  nsfServer: http://nsf-server.skiff-app.svc.cluster.local
+  nsfServer: http://nsf-server.v190613.163skiff.com
 
 
   # 服务鉴权配置
