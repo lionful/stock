@@ -6,7 +6,7 @@ nsf:
     desc: this is service description
 
   # agent配置
-  nsfServer: http://nsf-server.skiff-app.svc.cluster.local
+  nsfServer: http://nsf-server.v190613.163skiff.com
 
 
   # 服务鉴权配置
@@ -17,6 +17,4 @@ nsf:
     retry: 3
     accessKey: 5948551c87894f2cbfbbd01980f39387
     secretKey: 39baf889773a4f60bd39dd08dfef3d94
-    
-
  
