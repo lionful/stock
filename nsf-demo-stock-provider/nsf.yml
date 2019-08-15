@@ -1,0 +1,22 @@
+nsf:
+  #  基本信息
+  application:
+    name: nsf-demo-stock-provider
+    version: 0.0.1
+    desc: this is service description
+
+  # agent配置
+  nsfServer: http://nsf-server.skiff-app.svc.cluster.local
+
+
+  # 服务鉴权配置
+  authority:
+    #认证中心地址
+    server: http://10.182.2.107:10101
+    #访问重试次数(仅403状态会重试，默认为 3 )
+    retry: 3
+    accessKey: 5948551c87894f2cbfbbd01980f39387
+    secretKey: 39baf889773a4f60bd39dd08dfef3d94
+    
+
+ 

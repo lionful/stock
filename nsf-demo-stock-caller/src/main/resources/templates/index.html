@@ -1,0 +1,467 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://v4.bootcss.com/docs/4.0/examples/dashboard/dashboard.css"/>
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet"/>
+</head>
+<body>
+
+<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" style="font-size: 20px" href="#">NSF股票演示系统</a>
+    <div class="d-flex flex-row form-control form-control-dark">
+        <div class="p-2">
+            <button id="refresh_hot_advice" type="button" class="btn btn-secondary btn-sm">刷新</button>
+        </div>
+        <div style="line-height: 30px" class="p-2">热门股票推荐 :</div>
+        <div style="line-height: 30px" class="p-2" id="hot_advice">
+        </div>
+
+    </div>
+</nav>
+
+<div id="left-menu" class="container-fluid">
+
+    <div></div>
+    <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar" style="padding-top: 5em">
+
+            <div class="sidebar-sticky">
+
+                <!-- <div class="input-group mb-3">
+
+                    <input id="ak_input" type="text" class="form-control" placeholder="AK" aria-label="AK" aria-describedby="button-addon2"/>
+                    <input id="sk_input" type="text" class="form-control" placeholder="SK" aria-label="SK" aria-describedby="button-addon2"/>
+                    <div>
+                        <input id="token_switch" type="checkbox" data-toggle="toggle" data-onstyle="warning" data-offstyle="info"/>
+                    </div>
+                </div>  -->   
+
+                <div class="input-group d-flex flex-row-reverse">
+                    <div class="input-group-append">
+                        <button id="refresh_stock_list" type="button" class="btn btn-sm" style="margin-right: 5px">刷新
+                        </button>
+                    </div>
+                    <input style="margin-right: 5px" id="delay" type="text" class="input-sm" size="3" value="0"
+                           placeholder="秒"/>
+                    <p class="text-center"
+                       style="color: darkgray; font-size: 12px; line-height: 34px; margin-bottom: 0px ">
+                        设置模拟后端的处理延迟，单位为秒。</p>
+
+                </div>
+                <ul class="nav flex-column" id="stock_list">
+
+                </ul>
+               
+            </div>
+        </nav>
+    </div>
+</div>
+
+<main id="stock_detail" role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 id="nameid" class="h2"></h1>
+    </div>
+
+    <div class="col-md-6 col-md-offset-5" style="float:left">
+        <img id="dayK" src="" class="center"/>
+    </div>
+    <!-- 股票预测数据表格 -->
+    <div class="table-responsive col-md-6 col-md-offset-5" style="display:none">
+        <h2>预测</h2>
+        <table class="table table-striped table-sm">
+            <thead>
+            <tr>
+                <th>日期</th>
+                <th>预测开盘价</th>
+                <th>预测收盘价</th>
+                <th>预测最高价</th>
+                <th>预测最低价</th>
+            </tr>
+            </thead>
+            <tbody id="predict">
+            <tr>
+                <td id="date"></td>
+                <td id="predictOpeningPrice"></td>
+                <td id="predictClosingPrice"></td>
+                <td id="predictTopTodayPrice"></td>
+                <td id="predictBottomTodayPrice"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-responsive">
+        <h2 style="margin-top: 10px">详情</h2>
+        <table class="table table-striped table-sm">
+            <thead>
+            <tr>
+                <th>今日开盘价</th>
+                <th>昨日收盘价</th>
+                <th>最近成交价</th>
+                <th>买入价</th>
+                <th>卖出价</th>
+                <th>今日最高价</th>
+                <th>今日最低价</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td id="opening"></td>
+                <td id="closing"></td>
+                <td id="current"></td>
+                <td id="in"></td>
+                <td id="out"></td>
+                <td id="top"></td>
+                <td id="bottom"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-inline">
+
+        <div class="form-group mb-2">
+            <input type="text" class="form-control" id="sys_key"/>
+        </div>
+        <button id="sysPropBtn" type="submit" class="btn btn-primary mb-2">获取环境变量</button>
+    </div>
+  
+   
+
+
+    <div class="form-group">
+        <label for="logs">
+            <button id="clear_logs" type="button" class="btn btn-secondary btn-sm">清空</button>
+        </label>
+        <textarea class="form-control input-sm" id="logs" rows="10" disabled="true"></textarea>
+    </div>
+
+</main>
+
+</body>
+
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+<script type="text/javascript">
+
+    var searchStockById = function (id) {
+
+        var url = "/stocks/" + id;
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (s) {
+                if (s) {
+                    $('#nameid').text(s.name + '(' + s.id + ')')
+                    $('#dayK').attr('src', s.dailyKLineAddr)
+                    $('#opening').text(s.openingPrice)
+                    $('#closing').text(s.closingPrice)
+                    $('#current').text(s.currentPrice)
+                    $('#in').text(s.inPrice)
+                    $('#out').text(s.outPrice)
+                    $('#top').text(s.topTodayPrice)
+                    $('#bottom').text(s.bottomTodayPrice)
+                    $('#stock_detail').show();
+                }
+                refreshLog();
+            },
+            error: function () {
+                alert('cannot fetch stock data')
+            }
+        });
+    }
+
+    var getPredictListById = function (id) {
+
+      var url = "/predictPrice/" + id;
+
+      $.ajax({
+          type: 'GET',
+          url: url,
+          dataType: 'json',
+          success: function (p) {
+              var trList = $("#predict");
+              trList.empty();
+              for(var i in p){
+                  var tr = "<tr><td>" + p[i].date + "</td>" +
+                      "<td>" + p[i].predictBottomTodayPrice + "</td>" +
+                      "<td>" + p[i].predictClosingPrice + "</td>" +
+                      "<td>" + p[i].predictOpeningPrice + "</td>" +
+                      "<td>" + p[i].predictTopTodayPrice + "</td></tr>";
+                  trList.append(tr);
+              }
+
+          },
+          error: function () {
+              alert('cannot fetch stock predict data')
+          }
+      });
+  }
+
+
+    var getStockList = function (delay) {
+
+        var list = $('#stock_list');
+        list.empty();
+        var url = "/stocks?delay=" + delay;
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (res) {
+                list.empty();
+                if (res) {
+                    if (res.message) {
+                        list.append(res.message);
+                    } else {
+                        res.stocks.forEach(function (stock) {
+                            list.append('<li class="nav-item">' +
+                                '<a class="nav-link active stock_href" href="#" target-id="' + stock.id + '">' +
+                                stock.name +
+                                '</a></li>');
+                        })
+
+                        setTimeout(function () {
+                            clickFirstInLeftMenu();
+                        }, 200);
+                    }
+                    refreshLog();
+                }
+            }
+        });
+    }
+
+/*    var getSpread = function () {
+        var list = $('#stock_spread');
+        list.empty();
+        var url = "/spread";
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "json",
+            success: function (res) {
+                var Data = res;
+                for (var key in Data) {
+                    list.append('<li class="nav-item">' + key + ' : ' + Data[key] + '</li>');
+                }
+            }
+        });
+    }*/
+
+    var getHotAdvice = function () {
+
+        var list = $('#hot_advice');
+        list.empty();
+        var url = "/advices/hot";
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (res) {
+                list.empty();
+                if (res) {
+                    if (res.message) {
+                        list.append(res.message.substring(0,100) + "...");
+                    } else {
+                        res.stocks.forEach(function (stock) {
+                            list.append('<span href="#">' + stock.name + '</span>').append('&nbsp;');
+                        })
+                    }
+                }
+                refreshLog();
+            }
+        });
+    }
+
+    var refreshLog = function () {
+
+        var console = $('#logs');
+        var url = "/logs"
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (res) {
+                if (res) {
+                    console.empty();
+                    console.append(res.message);
+                }
+                console.scrollTop(console[0].scrollHeight);
+            }
+        });
+    }
+
+    var clearLogs = function () {
+
+        var url = "/logs/clear";
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (res) {
+                if (res) {
+                    refreshLog();
+                }
+            }
+        });
+    }
+
+    var echoAdvisor = function () {
+
+        var url = "/echo/advisor";
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (res) {
+                if (res) {
+                    refreshLog();
+                }
+            }
+        });
+    }
+
+    var echoProvider = function () {
+
+        var url = "/echo/provider";
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (res) {
+                if (res) {
+                    refreshLog();
+                }
+            }
+        });
+    }
+
+    var tokenOn = function (ak, sk) {
+
+    	/*<![CDATA[*/
+    	var url = "/tokenOn?ak=" + ak + "&sk=" + sk;
+    	/*]]>*/
+    	
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (res) {
+                if(res.message != "success") {
+                    alert(res.message);
+                }
+            }
+        });
+    }
+
+    var tokenOff = function () {
+
+        var url = "/tokenOff";
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (res) {}
+        });
+
+    }
+
+    var getSysProp = function (key) {
+
+        var url = "/secret/" + key;
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (res) {
+                if(res) {
+                    refreshLog();
+                }
+            }
+        });
+    }
+
+
+    var init = function () {
+        getHotAdvice();
+        getStockList(0);
+    }
+
+    //page is ready
+    $(function () {
+
+        $('#stock_detail').hide();
+        init();
+
+        $(document).on("click", '.stock_href', function () {
+            var stockId = $(event.target).attr('target-id');
+            searchStockById(stockId);
+            //getPredictListById(stockId);
+        })
+
+        $('#refresh_stock_list').click(function () {
+            var delay = $('#delay').val();
+            getStockList(delay);
+        })
+
+
+        $('#refresh_hot_advice').click(function () {
+            getHotAdvice();
+        })
+
+        $('#clear_logs').click(function () {
+            clearLogs();
+        })
+
+        $('#echo_advisor').click(function () {
+            echoAdvisor();
+        })
+
+        $('#echo_provider').click(function () {
+            echoProvider();
+        })
+
+        $('#sysPropBtn').click(function () {
+            var keys = $('#sys_key').val();
+            getSysProp(keys);
+        })
+
+        $('#token_switch').change(function() {
+            var token_on = $(this).prop('checked'); 
+            var ak = $('#ak_input').val();
+            var sk = $('#sk_input').val();
+
+            if(token_on) {
+                tokenOn(ak, sk);
+            } else {
+                tokenOff();
+            }
+            
+        })
+
+    })
+
+    var clickFirstInLeftMenu = function () {
+        var hrefs = $('.stock_href');
+        if (hrefs) {
+            hrefs[0].click();
+        }
+    }
+
+</script>
+
+</html>
