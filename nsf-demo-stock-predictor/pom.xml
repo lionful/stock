@@ -15,7 +15,7 @@
         <dubbo-spring-boot>1.0.0</dubbo-spring-boot>
     </properties>-->
     <properties>
-        <resteasy_version>3.0.19.Final</resteasy_version>
+        <resteasy_version>4.5.7.Final</resteasy_version>
         <servlet_version>3.1.0</servlet_version>
         <jetty_version>6.1.26</jetty_version>
         <validation_version>1.1.0.Final</validation_version>
